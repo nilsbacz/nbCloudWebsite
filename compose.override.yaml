@@ -13,6 +13,7 @@ services:
       #  from the bind-mount for better performance by enabling the next line:
       #- /app/vendor
     environment:
+      DATABASE_URL: "mysql://app:!ChangeMe!@database:3306/app?serverVersion=8.0&charset=utf8mb4"
       FRANKENPHP_WORKER_CONFIG: watch
       MERCURE_EXTRA_DIRECTIVES: demo
       # See https://xdebug.org/docs/all_settings#mode
@@ -24,3 +25,27 @@ services:
     tty: true
 ###> symfony/mercure-bundle ###
 ###< symfony/mercure-bundle ###
+
+###> doctrine/doctrine-bundle ###
+  database:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: app
+      MYSQL_USER: app
+      MYSQL_PASSWORD: "!ChangeMe!"
+      MYSQL_ROOT_PASSWORD: "!ChangeMe!"
+    command: --default-authentication-plugin=mysql_native_password
+    ports:
+      - "3306:3306"
+###< doctrine/doctrine-bundle ###
+
+###> symfony/mailer ###
+  mailer:
+    image: axllent/mailpit
+    ports:
+      - "1025"
+      - "8025"
+    environment:
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+###< symfony/mailer ###
